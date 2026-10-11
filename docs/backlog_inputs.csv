@@ -1,0 +1,13 @@
+id,title,categories,severity,confidence,controllability,effort,owner
+B1,Stability resilience: timeouts + last-known trip cache + visible error/retry,CRASH_LOAD_PERF,3,2,2,2,Mobile + Backend
+B2,Install/launch error: soft-fail integrity check + Android 17 compatibility,INSTALL_ERROR;DEVICE_COMPAT,3,1,2,2,Mobile + Security
+B3,Auth clarity: distinct not-registered message + resend/channel switch + no logout during active trip,LOGIN_SESSION;ACCESS_OTP,3,2,2,2,Backend (Auth) + Mobile
+B4,Tracking honesty: last-updated time + stale-pin state + smoothed ETA,TRACKING_LOCATION;ETA_PICKUP_TIME,2,2,2,2,Backend + Driver app + Mobile
+B5,No-show transparency: warn before return-leg auto-cancel + show who/when + appeal path,NO_SHOW,3,2,2,2,Product + Backend
+B6,Booking: explain every rejection with the rule; fix wrong-date/duplicate defects,BOOKING_FAILURE;BOOKING_RULES;CANCEL_EDIT;ADDRESS_LOCATION_MGMT,2,1,3,2,Mobile + Backend
+B7,In-app helpdesk entry + masked call/chat to assigned driver,SUPPORT_HELPDESK;DRIVER_CONTACT,2,2,2,3,Product + Ops
+B8,Skippable trip rating + consent shown once + fix feedback flow,FORCED_RATING;PERMISSIONS_CONSENT;FEEDBACK_FLOW_BROKEN,2,2,3,1,Mobile + Product
+B9,Operations: routing/clubbing/vehicle conduct review per client,ROUTING_ALLOCATION;VEHICLE_DRIVER_OPS,2,1,1,3,Customer Success + Ops
+B10,Notifications and pickup-time-change communication,NOTIFICATIONS,2,1,3,1,Mobile + Backend
+B11,UI/usability backlog triage,UI_UX;FEATURE_REQUEST,1,1,3,2,Product + Design
+B13,Boarding and safety-check flow: seat-belt check over OTP; QR scan blocked by location accuracy; QR scan not clearing no-show,BOARDING_QR_OTP;SAFETY,2,1,2,1,Mobile + Product
