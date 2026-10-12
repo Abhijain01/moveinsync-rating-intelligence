@@ -1,0 +1,31 @@
+﻿row_index,stars,text,labels
+1,1,please stop otp verification when we login every time,ACCESS_OTP
+4,1,"The app is pretty glitchy. Some days it won't let me loging saying ""No Active Subscription"". I always need to run around to get it resolved. Not very reliable.",ACCESS_OTP
+5,1,having frequent trouble in opening the app. throwing error that the app was not installed thru playstore. frustrating,INSTALL_ERROR
+7,1,Cannot get verified because otp isn't sent,ACCESS_OTP
+8,3,average,NONE
+11,1,app crashed did not open in my mobile plx fixed it vivo v25 Pro,CRASH_LOAD_PERF
+12,1,complete unreliable,NONE
+18,3,after 2-3 days it says cannot open as not installed from play store. I need to install again due to this.,INSTALL_ERROR
+20,2,"Address and locations are not matching, different location show's up for the address entered.",ADDRESS_LOCATION_MGMT
+23,2,navigating inside the app is not easy,UI_UX
+24,2,"keep logout need otp login every time, not stable connectivity. timesout",LOGIN_SESSION|ACCESS_OTP|CRASH_LOAD_PERF
+38,1,3rd class app,NONE
+50,1,Useful service,NONE
+57,1,This app doesn't work properly. it always shows 'SESSION EXPIRED. YOU ARE UNAUTHORISED. going back in 2seconds'. No location is suggested in the search.,LOGIN_SESSION|ADDRESS_LOCATION_MGMT
+59,2,The worst app at least provides cab number,FEATURE_REQUEST
+60,1,Worst management ever daily I get late 1 hour will you pay for my time? joking with us I am gonna rate you the negative with other account as well,VEHICLE_DRIVER_OPS
+65,3,The App is great an all the only thing that annoys me is that you cannot call or message the driver. Can this feature be added if not the call option then a message feature if you needed to message the driver on something or if you forgot something in the vehicle it's good to keep in touch if this can be looked into,DRIVER_CONTACT
+67,1,Stupid app showing no address,ADDRESS_LOCATION_MGMT
+68,1,worst service and rude employees,VEHICLE_DRIVER_OPS
+71,1,"The recent updates in the UI have made the app very difficult to use. Booking a shuttle is now a 2 step process previously it used to be 1. I got confused and thought I had booked a cab while I hadn't. Was too late in realising that. Such major changes need to be released in a better way rather than just throwing them in the user's face. Another bad thing is even though I am in 1 cab but I can see all the ones available for that time. I don't need to see others, just show me mine.",UI_UX|UPDATE_REGRESSION
+75,2,"The Move In Sync app needs to seriously rethink its rating system. It’s frustrating that users are only given options like 4 or 5 stars, with no way to rate 1, 2, or even 3. This completely undermines transparency and fairness. A rating system should reflect genuine user experience — both positive and negative. By limiting feedback to only high ratings, it creates a misleading impression and doesn’t allow users to express real concerns or dissatisfaction.",FEEDBACK_FLOW_BROKEN
+76,1,everytime I download it won't open again after 1-2 days and I have to download it again,CRASH_LOAD_PERF
+78,3,"this app keeps asking to review again-2, updating my rating from 5 to 3 star because of this.",FORCED_RATING
+80,1,I have booked the shift cabs before the cut off timings. Now my roster has been changed and i'm not able to edit the date.,CANCEL_EDIT
+85,1,bekar,NONE
+92,1,one of the world worst application,NONE
+93,1,terrible phone app... keeps hanging,CRASH_LOAD_PERF
+95,1,one of the worst transport service never recommend anyone.,NONE
+96,1,"not showing realtime data & track, worst experience",TRACKING_LOCATION
+99,1,good,NONE
