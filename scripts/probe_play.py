@@ -15,7 +15,7 @@ from google_play_scraper import Sort, app, reviews
 
 APP_ID = "com.moveinsync.ets"
 FIELDS = [
-    "reviewId", "userName", "content", "score", "thumbsUpCount",
+    "reviewId", "content", "score", "thumbsUpCount",
     "reviewCreatedVersion", "at", "replyContent", "repliedAt", "appVersion",
 ]
 
@@ -105,7 +105,7 @@ def main(argv=None):
         "library": "google-play-scraper",
         "app_metadata": meta,
         "summary": stats,
-        "reviews": rows,
+        "reviews": [{k: v for k, v in row.items() if k not in {"userName", "userImage"}} for row in rows],
     }
     path.write_text(json.dumps(payload, indent=2, default=str), encoding="utf-8")
     print(f"Saved snapshot: {path}")

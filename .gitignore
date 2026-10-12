@@ -1,7 +1,18 @@
 .venv/
+venv/
 __pycache__/
 .pytest_cache/
 .env
-data/
-reports/analysis_*/
 *.zip
+*.pkl
+# Ignore future collection outputs, retain the original submission evidence.
+data/*
+!data/raw/
+data/raw/*
+!data/raw/run_20261010T203205Z/
+!data/raw/probe_com.moveinsync.ets_20261010T200951Z.json
+!data/processed/
+data/processed/*
+!data/processed/run_20261010T203205Z/
+reports/analysis_*/
+!reports/analysis_run_20261010T203205Z/

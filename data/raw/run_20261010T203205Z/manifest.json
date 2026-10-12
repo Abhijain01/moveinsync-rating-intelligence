@@ -1,0 +1,45 @@
+{
+  "run_id": "run_20261010T203205Z",
+  "started_utc": "2026-10-10T20:32:05.551712+00:00",
+  "params": {
+    "app_id": "com.moveinsync.ets",
+    "lang": "en",
+    "country": "in",
+    "score": null,
+    "sort": "NEWEST",
+    "max_reviews": 0,
+    "sleep_seconds": 1.5,
+    "retries": 2
+  },
+  "environment": {
+    "google_play_scraper": "1.2.7",
+    "python": "3.9.1",
+    "os": "Windows-10-10.0.26100-SP0"
+  },
+  "listing_at_start": {
+    "appId": "com.moveinsync.ets",
+    "title": "MoveInSync",
+    "developer": "MoveInSync: Enabling Hybrid Workplaces",
+    "score": 4.637723,
+    "ratings": 114857,
+    "reviews": 23617,
+    "histogram": [
+      7334,
+      837,
+      1230,
+      7293,
+      98158
+    ],
+    "installs": "1,000,000+",
+    "version": "12.19.0",
+    "updated": 1791478100,
+    "genre": "Maps & Navigation",
+    "url": "https://play.google.com/store/apps/details?id=com.moveinsync.ets&hl=en&gl=in",
+    "updated_utc": "2026-10-08T16:48:20+00:00"
+  },
+  "status": "complete",
+  "stop_reason": "token_exhausted",
+  "pages": 122,
+  "rows_written": 24314,
+  "finished_utc": "2026-10-10T20:37:17.395195+00:00"
+}

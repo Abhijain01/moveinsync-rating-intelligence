@@ -1,0 +1,95 @@
+{
+  "tool_version": "1.0.0",
+  "run_utc": "2026-10-12T17:40:44+00:00",
+  "input_csv": "C:\\Users\\abhis\\moveinsync-rating-intelligence\\data\\processed\\run_20261010T203205Z\\reviews_clean.csv",
+  "input_sha256_16": "f1bddcf2e73a6570",
+  "previous_csv": null,
+  "taxonomy_sha256_16": "e3799ec1be70c4ee",
+  "window_since": "2025-10-10",
+  "window_until": "2026-10-09",
+  "split_date": "2026-04-10",
+  "window_reviews": 2856,
+  "pool_1to3": 846,
+  "neg_1to2": 772,
+  "one_star_share_pct": 24.0,
+  "mean_stars": 3.834,
+  "actionable": 593,
+  "generic_negative_only": 162,
+  "no_signal": 91,
+  "n_spikes": 2,
+  "spike_tests": 230,
+  "spike_alpha": 0.01,
+  "n_version_flags": 0,
+  "headline": {
+    "asof": "2026-10-09",
+    "current": {
+      "n": 721,
+      "mean": 3.8,
+      "mean_ci": [
+        3.68,
+        3.93
+      ],
+      "one_pct": 25.0,
+      "one_ci": [
+        21.9,
+        28.3
+      ],
+      "pos_pct": 68.9
+    },
+    "previous": {
+      "n": 817,
+      "mean": 3.83,
+      "mean_ci": [
+        3.72,
+        3.95
+      ],
+      "one_pct": 25.0,
+      "one_ci": [
+        22.1,
+        28.0
+      ],
+      "pos_pct": 70.5
+    },
+    "mean_change": -0.030486014086922086,
+    "mean_p": 0.7305190378965096,
+    "one_star_p": 0.998530119433535,
+    "listing": {
+      "score": 4.637723,
+      "ratings": 114857,
+      "text_reviews": 23617,
+      "version": "12.19.0",
+      "captured": "2026-10-10"
+    },
+    "top_themes": [
+      [
+        "CRASH_LOAD_PERF",
+        45
+      ],
+      [
+        "VEHICLE_DRIVER_OPS",
+        22
+      ],
+      [
+        "ROUTING_ALLOCATION",
+        21
+      ]
+    ]
+  },
+  "headline_lines": [
+    "Play listing when the snapshot was taken (2026-10-10): 4.6 stars from 114,857 ratings. Google weights recent ratings; this listing score is not a lifetime arithmetic mean and is not directly comparable with the text reviews below.",
+    "Last 90 days to 2026-10-09: 721 text reviews, mean 3.8 stars (95% CI 3.68-3.93), one-star 25.0% (CI 21.9-28.3), 4-5 star 68.9%.",
+    "Previous 90 days: 817 reviews, mean 3.83, one-star 25.0%.",
+    "Change: mean stars -0.03 (p=0.73), one-star share +0.0 points (p=1.00): no statistically distinguishable change.",
+    "Most frequent complaint themes in the last period (1-3 star reviews, overlapping): Crashes, blank screen, not opening, slow or endless loading 45; Cab late/not provided, driver conduct, vendor / transport-team failures 22; Routing, clubbing, sequence and cab allocation 21.",
+    "Safety-related mentions in the same period: 6 (read these first).",
+    "Public text reviews are a self-selected sample; use internal telemetry to judge a release."
+  ],
+  "llm": {
+    "enabled": false,
+    "attempted": 0,
+    "labelled": 0,
+    "fallback": 0
+  },
+  "python": "3.9.1",
+  "pandas": "2.3.3"
+}

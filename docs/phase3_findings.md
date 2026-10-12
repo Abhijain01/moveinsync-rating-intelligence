@@ -13,7 +13,7 @@ Tags: **[F]** observed fact, **[Q]** quantitative finding, **[I]** inference, **
 3. Validation by hand-labelling, in two rounds:
    - Round 1: 120 held-out reviews labelled blind, scored, rules improved from the errors. This sample is now **tuned** and its score is optimistic.
    - Round 2: fresh 100 reviews from the 224 not yet read, labelled blind **before** scoring, rules frozen (taxonomy hash `e3799ec1be70c4ee`). This is the honest test.
-4. **Caveat:** all hand labels were produced by Claude, not by an independent human, and the rules were also written by Claude. Labelling is judgement-based (some reviews are genuinely ambiguous). Agreement with a human labeller is unmeasured. Recommended: you re-label 30 rows of `reports/phase3/audit2_sample.csv` and compare (Section 7).
+4. **Validation limit:** The original validation labels were AI-produced. A completed 30-review human spot check gave human-vs-AI F1 0.84 and human-vs-rule F1 0.67; 13 labels involved AI-assisted mapping to category IDs, so the check was not fully blind or independent. See `docs/methodology.md` and `reports/phase3/human_agreement.md`.
 
 | Test | n | Micro precision | Micro recall | Micro F1 | "Has actionable category" precision / recall |
 |---|---|---|---|---|---|
@@ -42,10 +42,10 @@ Tags: **[F]** observed fact, **[Q]** quantitative finding, **[I]** inference, **
 Share of the **686 one-star** reviews (denominator = one-star): stability (crash/install/device) 17.8%; authentication (login or OTP) 12.2%; operations (vehicle/driver, routing, support) 21.1%; tracking or ETA 10.3%; no-show 2.6%. [Q]
 [I] There is no single dominant cause. The largest identifiable single cluster is app stability/performance, but it is heterogeneous: of its 150 hits, 65% name a specific failure mode (will not open 18%, slow/loading 27%, crash 13%, errors/server down 11%, hang 4%; overlapping) and 37% say only "not working/buggy".
 
-**App-side vs operations-side** (mutually exclusive buckets, denominator POOL = 846) [Q]: app-side only 46.5%; operations only 12.6%; both 5.7%; mixed-nature only 5.3%; no actionable category 29.9%. [I] Most actionable complaints point at software, but about one in five one-star reviews is mainly about transport operations, which an app change cannot fix directly.
+**App-side vs operations-side** (mutually exclusive buckets, denominator POOL = 846) [Q]: app-side only 46.5%; operations only 12.6%; both 5.7%; mixed-nature only 5.3%; no actionable category 29.9%. [I] Most actionable complaints point at software, but about one in five one-star reviews is mainly about transport operations, whose causes may span software, client policies and operations.
 
 ## 4. Trends in the window (H1 = 2025-10-10..2026-04-09, n=380; H2 = 2026-04-10.., n=466)
-- [Q] **No aggregate deterioration.** One-star share of all reviews: 23.1% (H1) vs 24.8% (H2), p = 0.28; mean stars 3.84 vs 3.83. 26-category tests: p < 0.002 is the multiple-testing line.
+- [Q] **No statistically detectable deterioration in the analyzed text-review windows.** One-star share of all reviews: 23.1% (H1) vs 24.8% (H2), p = 0.28; mean stars 3.84 vs 3.83. 26-category tests: p < 0.002 is the multiple-testing line.
 - [Q] **Login/session complaints fell:** 10.3% -> 3.9% of POOL (p = 0.0002, passes the correction). They come in bursts, not as one regression: 20.9% of the POOL in Oct 2025, 19.8% in Jun 2025, 11.1% in Feb 2026, 1-5% each month since Mar 2026 (corpus Apr 2025 onward). Between 10 Oct and 14 Nov 2025, 16 of the 19 versioned login hits are version 12.6. [H] A server/session policy change, not an app release, may explain the bursts; public data cannot separate these.
 - [Q] **"Not installed from Play Store" errors are emerging.** Strict phrasing: 2 hits in H1, 15 in H2 (0.5% -> 3.2% of POOL, uncorrected p = 0.0055, **does not pass** the 0.002 correction). Monthly strict hits: Jun 1, Jul 4, Aug 7, Sep 3 (+ the first 9 days of Oct not split out). Spread across versions 12.15-12.19 and 11.0.2 (not one bad build). Reviewers describe error after 2-3 days, uninstall/reinstall every few days, "10 times in 3 weeks". The category rule overcounts (25 hits, only 17 with the strict phrasing); I use the strict count here. [H] An installer-source or signature/integrity check on the client, or an auto-update interaction, is a candidate cause; unverifiable from public data.
 - [Q] Stability/performance moved 15.3% -> 19.7% (p = 0.09, not significant).
@@ -61,14 +61,14 @@ Share of the **686 one-star** reviews (denominator = one-star): stability (crash
 
 ## 6. Limits and what remains uncertain
 - Recall about 0.65: some themes are under-counted, especially address/nodal-point management, booking failures and feature requests.
-- Hand labels are LLM-produced; inter-rater agreement with a human is unmeasured.
+- Original gold labels are AI-produced. The completed 30-review human spot check is small and partly AI-assisted, so it is not a full independent audit.
 - Reviews do not identify the employer or city; operations complaints are a mixture of different vendors and sites. No claim can be made about which client's service is worse.
 - "Why" claims (root causes) require internal telemetry (crash logs, auth/session logs, no-show events, ETA vs actual). Phase 4 states which logs would decide each.
 - Window-edge: the 12-month window begins in the middle of a login-complaint burst (Oct 2025); H1 vs H2 login comparison is sensitive to that.
 - A few reviews are about the driver app (one clearly says so); misattributed reviews exist but are rare.
 
-## 7. Optional: independent check (about 20 minutes)
-Open `reports/phase3/audit2_sample.csv`, label 30 rows yourself using the category names in `scripts/taxonomy.py`, and compare with `scripts/audit2_labels.py`. Large disagreement means the numbers above should be treated more cautiously.
+## 7. Completed spot check and next validation
+The 30-row check is complete (`reports/phase3/human_agreement.md`): human-vs-AI F1 0.84; human-vs-rule F1 0.67. Thirteen mappings were assisted by AI, limiting independence. Next, have a second person label a fresh 100-review sample without seeing machine labels, with deliberate coverage of booking, addresses and safety.
 
 ## 8. Reproduction
 ```
@@ -76,3 +76,5 @@ python scripts\classify.py data\processed\run_20261010T203205Z\reviews_clean.csv
 python scripts\analyze_themes.py data\processed\run_20261010T203205Z\reviews_clean.csv --since 2025-10-10
 python scripts\validate_classifier.py reports\phase3\audit2_sample.csv audit2_labels
 ```
+
+Ownership labels are provisional taxonomy buckets, not proof that a cause lies outside Engineering. Routing causes need the B9 cross-team investigation; public text alone cannot separate planner software, client policy and vendor execution.

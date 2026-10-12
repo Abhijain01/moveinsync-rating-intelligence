@@ -3,8 +3,8 @@
 Source: run `run_20261010T203205Z` (google-play-scraper 1.2.7, lang=en, country=in, newest-first, retrieved 2026-10-10 20:32-20:37 UTC). Analysis file: `reviews_clean.csv` (uploaded by user).
 
 ## Collection (observed facts)
-- Ingest status complete, stop reason token_exhausted, 122 pages, **24,314 rows**. Clean file has 24,314 rows and 24,314 unique review ids, so **no duplicates and no rejected rows** (raw count from the ingest log equals the clean count). `data_quality.md` and `manifest.json` not yet seen; this will be confirmed when shared.
-- Listing text-review count at probe time was 23,617, so collected rows exceed it by 697 (+2.9%). Not explained by duplicates. **Hypothesis:** the listing count is lagged or defined differently. Not required to resolve.
+- The supplied original manifest and data-quality report confirm ingest status complete, stop reason token_exhausted, 122 pages, **24,314 raw and clean rows**, **24,314 unique review IDs**, no rejected rows and no duplicate IDs. Token exhaustion is not proof of a census; collection used lang=en, country=in.
+- Listing text-review count at probe time was 23,617, so collected rows exceed it by 697 (+2.9%). Not explained by duplicates. **Hypothesis:** the listing count is lagged or defined differently. Unresolved; do not infer complete source coverage.
 - Date range 2014-03-14 to 2026-10-09 (IST). Version known for 92.3% of rows (stable at about 90% in every year). Empty text: 1 row. Writing system: 99.5% Latin letters (Hinglish in Latin script is not separable at this stage), 3 Indic-script rows.
 - Reviewer names are not stored.
 
@@ -12,7 +12,7 @@ Source: run `run_20261010T203205Z` (google-play-scraper 1.2.7, lang=en, country=
 - Star mix of all 24,314 text reviews: 1-star 6,352 (26.1%), 2-star 1,165, 3-star 1,089, 4-star 2,794, 5-star 12,914 (53.1%).
 - Text reviews as a share of lifetime ratings per star (listing histogram): 1-star 86.6%, 3-star 88.5%, 4-star 38.3%, 5-star 13.2%. **2-star shows 139.2% (1,165 text reviews vs 837 histogram ratings)**, which is impossible if both count the same thing. Unresolved data anomaly; possible explanations (rating edits, differently scoped histogram) are hypotheses. Treat the percentages as approximate.
 - Quantitative: collected text reviews equal 86.6% of the listing's lifetime 1-star count (6,352 vs 7,335), 88.5% of 3-star, 38.3% of 4-star and 13.2% of 5-star, but **139% of 2-star (1,165 vs 837)**, which is impossible if both sources count the same ratings. The listing histogram and the review feed are therefore not in sync (cause unknown), and these ratios are only indicative. The corpus is not a census of anything; it is a self-selected sample weighted toward low stars. Collection used `lang=en, country=in`; reviews in Indic scripts are only 3 of 24,314, which is plausible for a workforce that writes in English or Latin-script Hinglish but is untested against `lang=hi`.
-- Lifetime histogram arithmetic (quantitative): shortfall from a perfect 5.0 is 41,605 star-points; **1-star ratings account for 70.5%** (29,340), 4-star 17.5%, 2-star 6.0%, 3-star 5.9%. Reducing the cause of 1-star ratings is therefore the dominant lever on the headline rating. Lifetime counts only; no time series of non-text ratings is public.
+- Collection-histogram arithmetic (unweighted, not the displayed rating): shortfall from a perfect 5.0 is 41,600 star-points; **one-star ratings account for 70.5%** (29,336). This motivates reading severe complaints but cannot quantify their contribution to Google's recent-weighted displayed rating (S22).
 - Text length: median 4 words overall; 5-star median 2 words, 1-star median 11 words; 19.3% of 1-star reviews have fewer than 4 words (low information).
 
 ## Trend (quantitative; text reviews only)

@@ -1,9 +1,9 @@
-# Phase 5: Prioritization model and engineering backlog (revised 2026-10-11 after independent review)
+# Phase 5: Prioritization model and engineering backlog (updated 2026-10-12 for submission)
 
 Tags: **[F]** observed fact, **[Q]** quantitative finding, **[I]** inference, **[H]** hypothesis, **[R]** recommendation.
 
 ## 1. Recommendation in one paragraph [R]
-Start with a **one-to-two-week instrumentation gate (B0)**, then build **B1 (stability resilience)**. B1 is the only item that stays in the top 3 in more than half of the sensitivity trials. After B1, the next tier is **statistically a tie**: B3 (authentication clarity), B8 (skippable rating), B4 (tracking honesty) and B6 (booking explanations) each land in the top 3 in 32-45% of trials. I put **B3 first among them by judgement, not by score**, because it blocks use of the app, includes a safety-relevant case, and its OTP part is stable over time; B8 is done in parallel because it is the cheapest. Install error (B2) and no-show (B5) get short diagnosis spikes. **No rating lift is promised.**
+Start B0, booking investigation (B6), the cross-team commute-reliability register (B9) and credible safety assessment from day 1. B0 targets one to two weeks; B1 (stability resilience) remains the strongest scored engineering candidate. B1 is the only item that stays in the top 3 in more than half of the sensitivity trials. After B1, the next tier has **uncertain relative ranks**: B3 (authentication clarity), B8 (skippable rating), B4 (tracking honesty) and B6 (booking explanations) each land in the top 3 in 32-45% of trials. I put **B3 first among them by judgement, not by score**, because it blocks use of the app, includes a safety-relevant case, and its OTP part is stable over time; B8 is done in parallel because it is the cheapest. Install error (B2) and no-show (B5) get short diagnosis spikes. **No rating lift is promised.**
 
 ## 2. Scoring model (inputs: `docs/backlog_inputs.csv`; code: `scripts/prioritize.py`)
 `Score = Reach% x Severity x Confidence x Controllability / Effort`
@@ -38,27 +38,27 @@ Start with a **one-to-two-week instrumentation gate (B0)**, then build **B1 (sta
 - [Q] Only **B1** is robust (top 3 in 79% of trials). Every item has a rank range of 1-12 under the noise. **Do not defend any order below the first place.**
 - [I] B8 ranks high because its effort is guessed as small; its reach is 5.4% and its effect on Play ratings is unmeasurable. It is a cheap usability fix, not a rating lever.
 - [I] **B3**: forced-logout complaints fell from 10.3% to 3.9% of the pool between halves while OTP complaints stayed flat (6.6% to 5.6%), so its recent reach (9.2%) is lower than the full-year 12.4%. That drop is why B3 is no longer a clear second.
-- [I] **B9** (operations) has the highest reach after B1 (15.5% recent) but scores last because the app team cannot control it. It is a customer-success matter, not a mobile ticket.
+- [I] **B9** has substantial reach (15.5% recent). Its low app-team controllability score does not mean it is low company priority. Start a jointly owned incident register and pilot on day 1; split planner defects, policy limits and vendor execution. Detailed owners, deadlines and metrics are in B9.
 - [I] The multiplicative formula undervalues rare but severe problems (B2, B5, B13); that is why they get diagnosis spikes or small tickets.
-- [I] B6 (booking) is the step the case calls most important. It is deferred to after B0 because its count is the least reliable (classifier recall 0.25 on booking failure in the frozen test, so its reach is probably higher) and because the mix of client-configured rules and genuine defects is unknown. Its first step (explain every rejection with the rule) can start before B0 completes if Product wants it.
+- [I] B6 (booking) creates the trips the service depends on. Recall 0.25 is based on four gold examples and cannot justify delay. Start funnel instrumentation, manual audit and defect reproduction on day 1, in parallel with B0/B1. Keep the historic score unchanged; investigation timing is a business-importance override.
 - B10, B11 and B13 were not investigated at register depth; their confidence is 1.
 
 ## 4. Backlog
 Ticket-level specs (evidence, scope, acceptance criteria, telemetry, guardrails): `docs/engineering_tickets.md`.
 
 ### B0. Instrumentation and data gate (not scored; do first; guess S, 1-2 weeks)
-Android vitals by version and device against Google's thresholds (1.09% crash, 0.47% ANR of daily active users; 8% for one device model); OTP funnel by channel, provider and client; the install-error string and its source; location ping gaps and ETA error; no-show events. Done when each of R1-R5 has a number that confirms or rejects its leading hypothesis. Also pull **Play Console ratings by version and date**: as the owner MoveInSync sees all ratings, a sample about five times larger than the text reviews, and it should be the primary answer to "How are our ratings?".
+Android vitals by version and device against Google's thresholds (1.09% crash, 0.47% ANR of daily active users; 8% for one device model); OTP funnel by channel, provider and client; the install-error string and its source; location ping gaps and ETA error; no-show events; booking attempts through confirmation with technical failures separated from client-rule rejection. Done when each of R1-R6 has a number that confirms or rejects its leading hypothesis. Also pull **Play Console ratings by version and date**: as the owner MoveInSync sees all ratings, a sample about five times larger than the text reviews, and it should be the primary answer to "How are our ratings?".
 
 ### B1. Stability resilience (rank 1; guess M)
 150 reviews, 17.7% of the pool (19.7% in the recent half). **Scope: mitigate the network and loading modes** (timeouts, last-known-trip cache with its age, visible error with Retry). This helps whichever backend cause is behind slow loading or "no network" complaints. It does **not** address the "will not open" (18% of the cluster) or crash (13%) modes, which need B0 (crash logs and vitals). Controllability is scored 2 because the backend is involved.
 
 ### B3. Authentication clarity (guess M)
-Forced logout 57 and OTP 51 (union 105; 9.2% recent, 12.4% full year). Distinct messages for "not registered or no subscription" and "OTP delayed"; resend with channel switch; silent session refresh; no logout during an active trip. The SOS acceptance criterion rests on a single review and should be checked with the team.
+Forced logout 57 and OTP 51 (union 105; 9.2% recent, 12.4% full year). Distinct messages for "not registered or no subscription" and "OTP delayed"; resend with channel switch; refresh ordinary session expiry during active trips; preserve explicit logout and security revocation with an approved emergency-contact fallback. The SOS acceptance criterion rests on a single review and should be checked with the team.
 
 ### B8. Skippable trip rating, consent shown once (guess S)
 Forced rating 17, consent 18, broken feedback flow 13. **Hard rule:** do not route users to the Play Store, do not use the Play in-app review prompt as a gate, do not steer toward 5 stars.
 
-### B4, B6, B10, B7, B13, B11 (ranks 4-10)
+### B4, B6, B10, B7, B13, B11 (historic score ranks 4-10; investigation overrides below)
 - **B4 Tracking honesty:** "last updated hh:mm", stale pin state, smoothed ETA. Needs B0 item 4 to find the cause (driver app, ingestion or ETA model).
 - **B6 Booking:** show the rule behind every rejection; fix wrong-date, duplicate and disabled-button defects separately.
 - **B10 Notifications and pickup-time-change communication:** 33 notification reviews, plus pickup-time-change complaints inside the ETA category.
@@ -75,14 +75,14 @@ Strict-phrase mentions by month: Jun 1, Jul 4, Aug 7, Sep 3. The rule-based coun
 ### B12. Reply to low-star reviews (not scored; start now)
 Developers replied to 97.8% of reviews in 2023, 4.3% in 2025 and 0.8% in 2026 to date (all reviews; 2 of 224 low-star reviews in the last 90 days). Replies name a fix, a workaround or where to get help, never ask for a re-rating and are not sent to only some star levels. Effect on ratings is unmeasurable from public data.
 
-### B9. Operations (not an engineering ticket)
-Routing 70 and vehicle/driver 70 reviews. Hand the evidence to Customer Success per client.
+### B9. Cross-team commute reliability (start day 1)
+Routing 70 and vehicle/driver 70 reviews (125-review union). FDE/Customer Success coordinates with Operations and Routing Engineering: cause/owner/action register by day 5, 2-4 week pilot, weekly review, missed-pickup/on-time/detour/resolution metrics. Public review text does not identify clients; use authorized internal incident data. See B9 in engineering_tickets.md.
 
 ## 5. Sequence [R]
-1. **Weeks 1-2:** B0 gate in parallel with B8 and the B2 and B5 diagnosis spikes; B12 starts at once.
+1. **Day 1 / weeks 1-2:** B0 including the booking funnel; B6 reproduction/audit; B9 cross-team incident register; same-day credible safety assessment. In parallel, scope B8 and run B2/B5 diagnosis spikes; B12 starts at once.
 2. **Weeks 2-6:** B1 build (network and loading modes first), B3 design and build, informed by B0.
-3. **After B0 confirms causes:** B4, B6 (the B6 explanation messages can start earlier), B13.
-4. **Hand off:** B9 to account owners; scope B7 with Operations.
+3. **After diagnosis confirms causes:** B4 and wider B6/B13 remediation; confirmed booking or safety defects need not wait for every B0 workstream to finish.
+4. **Weeks 2-4:** B9 pilot and weekly review with named incident owners; scope B7 with Operations.
 Revisit the order after B1 and B3 with real effort estimates and B0 data.
 
 ## 6. Ethics and limits

@@ -11,3 +11,5 @@ F1 and kappa are over all review-category decisions; exact = the whole label set
 Reading: kappa above about 0.6 is substantial agreement. If human vs AI hand labels is much lower than that, treat the Phase 3 validation numbers as optimistic. If human vs classifier is close to AI vs classifier, the classifier's measured quality holds up under an independent labeller.
 
 Small sample: with 30 reviews every figure has a wide margin of error.
+
+Validation caveat: this was a 30-review human spot check, not a full independent audit. Thirteen category mappings were assisted by AI. Original gold labels and category definitions were AI-produced; use these results with that limitation.

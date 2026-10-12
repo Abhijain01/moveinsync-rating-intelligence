@@ -112,7 +112,8 @@ def score(path):
          "Reading: kappa above about 0.6 is substantial agreement. If human vs AI hand labels is much lower than that, "
          "treat the Phase 3 validation numbers as optimistic. If human vs classifier is close to AI vs classifier, "
          "the classifier's measured quality holds up under an independent labeller.", "",
-         "Small sample: with 30 reviews every figure has a wide margin of error."]
+         "Small sample: with 30 reviews every figure has a wide margin of error.", "",
+              "For the submitted 30-review check, 13 category mappings used AI assistance; it is not a full independent audit."]
     text = "\n".join(L) + "\n"
     OUT.write_text(text, encoding="utf-8")
     print(text)

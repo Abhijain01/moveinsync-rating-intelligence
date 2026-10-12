@@ -20,9 +20,9 @@ Baselines from the 2,856 text reviews in the window (2025-10-10 to 2026-10-09; c
 - [Q] **Detectable change is large.** With one month of reviews (n about 240) and one-star share near 24%, only a swing of about 11 points is detectable at 5% significance and 80% power. With a quarter (n about 714) it is about 6.3 points; with two quarters (n about 1,430) about 4.5 points. For mean stars the figures are about 0.44, 0.25 and 0.18 stars. Normal month-to-month movement (sd 3.8 points, above the 2.8 points that sampling alone would give at n = 240, so low-star reviews arrive in clumps) is already as large as many realistic fix effects.
 - [I] A fix that removes, say, a 5-point slice of complaints would be **invisible in monthly star ratings** and barely visible quarterly. Reviews cannot validate individual releases.
 - [R] **MoveInSync itself has a far larger sample.** Play Console reports all ratings (not only the 20.6% that carry text) by app version, country and date. That is the right primary source for "How are our ratings?" and for comparing a staged rollout with the previous version. Public data cannot provide it, so this plan uses text reviews only as the outside view.
-- [F] The Play listing showed 4.6 stars from 114,855 ratings when checked in Phase 1; text reviews average 3.83. [I] The two differ because text reviews are a self-selected sample (the listing includes ratings without text); the cause is not verifiable from public data.
-- [Q] **Arithmetic on the listing (S12).** The listing's score is 4.6377 over 114,855 ratings and is displayed as 4.6. If the display is the plain mean rounded to one decimal (not verified), it shows 4.7 at 4.65: that needs about **4,000 additional five-star ratings**, or about **350 one-star ratings becoming five-star** (4.8% of the 7,335 one-stars). A true 4.7 needs about 24,000 additional five-star ratings. The average moves slowly, but a displayed one-decimal change is not out of reach; whether it happens depends on the rating inflow, which public data does not show.
-- [I] The all-time average is a poor measure of a release because it changes by about 0.000035 per one-star rating avoided. [R] Therefore the success criterion for the rating itself is **"no deterioration plus a sustained downward trend in specific complaint rates"**, not a target star value. No star-lift forecast is made.
+- [F] The collection manifest records a listing score of 4.637723 (displayed as 4.6) and 114,857 ratings; the earlier probe had 114,855. Text reviews average 3.83. These figures represent different populations and aggregation methods; their gap is not a measured deterioration.
+- [F] **Displayed rating definition (S22).** Google weights recent ratings and reports the lifetime average separately. The earlier estimate of ratings needed to display 4.7 has been removed: lifetime arithmetic cannot predict the displayed rating. No rating-lift forecast is made.
+- [R] Judge a release primarily by its targeted failure metric. Monitor the actual Play Console rating, recent all-rating distributions and theme complaint rates for sustained improvement; set targets after B0. Public text reviews alone cannot establish a causal rating effect.
 
 ## 3. Metric set
 
@@ -35,12 +35,13 @@ Targets are not invented here. Each target is set after the B0 baseline is read,
 | B1 Stability | Cold-start time | p50 and p95 from tap to trip visible | Set from B0 baseline |
 | B1 Stability | Blank-or-spinner sessions | Share of sessions ending with no trip data shown after the timeout | Set from B0 baseline |
 | B3 Auth | OTP success | Verified within 2 minutes of the request, by channel and client | Set from B0 funnel |
-| B3 Auth | Unrequested logouts | Session ends not initiated by the user, per active user per week; zero during an active trip | Zero during trips |
+| B3 Auth | Unrequested logouts | Interruptions from ordinary expiry per active user/week; track security revocations separately | Zero ordinary-expiry interruptions during trips; revocation remains effective |
 | B4 Tracking | Location staleness | Time since last driver ping at the moment the employee views the map; p95 | Set from B0 baseline |
 | B4 Tracking | ETA error | Absolute error of the ETA shown at 15, 10, 5 minutes before actual arrival | Set from B0 baseline |
 | B5 No-show | Disputed or reversed no-shows | Share of no-shows later reversed; share marked by driver vs system | Set from B0 baseline |
 | B2 Install | Launch-block rate | Sessions blocked by the integrity or installer check, by version, device, work-profile | Aim for legitimate installs near zero blocked |
-| B6 Booking | Rejection by reason | Booking attempts rejected, by rule code; duplicate-schedule rate | Set from B0 baseline |
+| B6 Booking | Technical booking-success rate | Confirmed bookings / attempts passing policy validation; separate abandonment and rule rejection; also confirmation p95 and duplicate rate | Day-1 funnel; targets from B0 |
+| B9 Commute reliability | Missed pickups, on-time share, excess duration/detour, resolution time | Per scheduled pickups/trips, against client SLA and agreed route constraints; repeat incidents tracked | Baseline and targets agreed with pilot clients by day 5 |
 | B8 Rating flow | Trip-detail access without rating | Share of trips where details are viewable without rating | 100% |
 | B7 Support | Contact path usage | In-app helpdesk or driver-contact use; first-response time | Set with Operations |
 
@@ -73,7 +74,7 @@ Baseline, window 2025-10-10 to 2026-10-09 (1-3 star reviews with the category, p
 
 ## 4. Method for judging a release [R]
 1. **Before:** record the primary metric baseline for at least two weeks (B0).
-2. **Staged rollout:** release to a small share of users first (Play staged rollout) and compare the primary metric between old and new versions on the same days. Same-day comparison removes weekday and seasonal effects.
+2. **Staged rollout:** release to a small share of users first (Play staged rollout) and compare the primary metric between old and new versions on the same days. Same-day comparisons reduce shared calendar effects but do not remove selection differences across devices, clients and update uptake. Stratify or adjust for those factors; use randomized rollout where feasible and avoid claiming causality from an uncontrolled version comparison.
 3. **Decision rule, fixed in advance:** the fix passes if the primary metric improves beyond the agreed margin **and** no guardrail below worsens beyond its tolerance. Otherwise hold the rollout.
 4. **After:** watch the secondary complaint rate for two quarters. A drop is supportive; no drop is not, by itself, evidence of failure (Section 2).
 
@@ -88,6 +89,8 @@ Baseline, window 2025-10-10 to 2026-10-09 (1-3 star reviews with the category, p
 | Share of users reaching SOS | Safety path stays reachable |
 
 ## 6. Review-monitoring cadence
+- **Each working day:** Product Support checks newly discovered safety-related complaints; the Safety lead assesses credible SOS, boarding or driver-safety failures the same day, recording severity, owner and mitigation/escalation. Existing operational safety channels remain primary; public reviews and the monthly pipeline are supplementary.
+- **Week 1:** booking funnel/reproduction and B9 incident register; **weeks 2-4:** weekly B9 pilot review. These workstreams start while B0 runs.
 - **Monthly:** run the pipeline (Phase 7) on a fresh public snapshot; compare with the previous snapshot; list new reviews by theme with IDs.
 - **Spike rule (implemented in `rating_intel/trends.py`):** expected count = the theme's trailing rate (up to 6 prior months, at least 3) times this month's complaint volume, so a month with more reviews in every category is not flagged for volume alone; flag when the count is at least 5 and P(X >= count) < 0.01 under Poisson; mark `strong` when it also survives a Bonferroni correction over all month-category pairs tested. The report states how many flags chance alone could produce. A version is flagged when its one-star share is higher than all other reviews in the window (p < 0.05 divided by the number of versions tested, at least 50 reviews); this compares a version with other *periods*, so it confounds version with time and is a prompt to look closer, not proof.
 - **Quarterly:** report complaint rate per 1,000 reviews with 95% intervals; do not narrate changes inside the interval.

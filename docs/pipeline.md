@@ -17,3 +17,8 @@
 
 ## Exit behaviour
 A cleaned-snapshot check raises a clear error if columns are missing; `analyze` refuses empty windows; model failures never stop the run.
+
+## Included submission snapshot
+The original raw JSONL, manifest, cleaned CSV and quality report are included under `run_20261010T203205Z`. `python scripts/demo.py` regenerates the canonical report with explicit window 2025-10-10 to 2026-10-09 and split 2026-04-10, without Google network access. The manifest's score is a captured listing value, not a lifetime arithmetic average; keep it distinct from text-review means. The exact snapshot is whitelisted in `.gitignore`; future runs stay ignored.
+
+The supplied probe contained reviewer name/image fields, which have been removed from the shared copy. The main raw/clean review snapshot already excluded those fields. No change was made to the classifier or original cleaned CSV.

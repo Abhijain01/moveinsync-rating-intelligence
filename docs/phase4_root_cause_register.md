@@ -2,7 +2,7 @@
 
 Tags: **[F]** observed fact, **[Q]** quantitative finding, **[I]** inference, **[H]** hypothesis needing validation, **[R]** recommendation.
 
-**Read this first.** Public reviews show *symptoms*. They cannot show *causes*. Every "cause" below is a hypothesis, ranked by how well public evidence supports it, together with the internal data that would confirm or kill it. Nothing here claims MoveInSync's internal state. Counts come from the Phase 3 rule classifier (precision about 0.76, recall about 0.65), so they are **lower bounds**. Denominator for every share: POOL = 846 reviews rated 1-3 stars, window 2025-10-10 to 2026-10-09, unless stated.
+**Read this first.** Public reviews show *symptoms*. They cannot show *causes*. Every "cause" below is a hypothesis, ranked by how well public evidence supports it, together with the internal data that would confirm or kill it. Nothing here claims MoveInSync's internal state. Counts come from the Phase 3 rule classifier (precision about 0.76, recall about 0.65), so they are **approximate and can be over- or under-estimated**. Denominator for every share: POOL = 846 reviews rated 1-3 stars, window 2025-10-10 to 2026-10-09, unless stated.
 
 Sources: Phase 3 outputs (`reports/phase3/`), `docs/source_register.md` (S1-S21: Play listing, MoveInSync Help Center articles, Android developer documentation). Where a Help Center statement is used it is marked "documented". A review ID is given for every review-based claim so it can be opened and checked.
 
@@ -44,7 +44,7 @@ Symptom, user impact, evidence (n, share, trend, review IDs), feature check, com
 - **Competing explanations.** (a) Subscription not given, or a different number or email than the registered one (the Help Center's own first checks; not an app defect, but the app gives no distinct message; see review `3e3d8c85...`). (b) SMS/WhatsApp provider failure or delay. (c) Rate limiting after retries locking the user out. (d) Per-client SSO or session TTL policy (login bursts in Oct 2025 were mostly version 12.6, 16 of 19 versioned hits, but not tied to a release). Multi-channel failure points at a shared upstream, not one provider **[I]**.
 - **System boundary.** Auth service, OTP provider(s), tenant/employee provisioning, session management.
 - **Discriminating evidence.** OTP funnel (requested -> sent -> provider-delivered -> entered -> verified) by channel, provider, client, hour; reasons for "not registered"; session TTL and refresh-failure logs; logout events not initiated by the user.
-- **Proposed fix.** [R] Distinguish "number not registered / not assigned" from "OTP delayed" in the UI; resend with channel switch and a visible cooldown; silent refresh before forced logout; never log out during an active trip.
+- **Proposed fix.** [R] Distinguish "number not registered / not assigned" from "OTP delayed" in the UI; resend with channel switch and a visible cooldown; silent refresh for ordinary expiry during an active trip while retaining explicit logout and security revocation; an approved emergency-contact fallback after auth loss.
 - **Regression test.** Provider-failure simulation; token-expiry during active trip; unprovisioned-number path returns a distinct message.
 - **Confidence.** High on symptom, medium-low on cause.
 
@@ -53,7 +53,7 @@ Symptom, user impact, evidence (n, share, trend, review IDs), feature check, com
 - **User impact.** [I] Employee cannot decide when to leave; leads to missed pickups and no-show marks (R5).
 - **Evidence.** Location stuck 30 min: `5d14e08b-ceb3-4849-8e3b-2b94f6f06a07`. Location "one or two hours ago": `ccba873d-c5c1-4c86-808d-d0b5885f1113`. ETA jumps 5 to 30 min: `79708a81-7362-4207-be30-f7817b66eb16`. ETA rises then drops: `954a0c46-3994-4e41-8363-0fb86158bfce`. "Location is not updated until the driver is at your pickup point": `eec41d97-5ac6-4612-ad5d-625e9bbd6669`. Driver connectivity: `9eda9256-7bf8-4e8e-b04d-d48457555dc5`. Offline request: `c4682050-e84d-4490-a694-acd4b981b407`.
 - **Competing explanations along the data path** (driver GPS capture -> upload -> server ingest -> ETA computation -> push or poll -> map render): (a) driver phone: battery optimisation kills background location, poor network; (b) ingestion delay or batching; (c) ETA algorithm (traffic model, re-routing); (d) employee app refresh interval/stale cache; (e) operations: driver app not used or trip started late.
-- **System boundary.** Mostly the **driver app and backend**, not the employee app. A fix to the employee app alone will not move this.
+- **System boundary.** The data path spans **driver app, backend and employee app**, plus connectivity and operations. The failed boundary is unconfirmed; an employee-app-only change may not address upstream causes.
 - **Discriminating evidence.** Location ping gap distribution per trip; server receive-time minus device-time; ETA error vs actual arrival by distance bucket; app refresh interval; share of trips with stale-location flags.
 - **Proposed fix.** [R] Show "last updated hh:mm" on the map and grey out stale pins; smooth ETA changes; alert operations when a vehicle goes silent. These are honesty improvements, not cosmetics: stale data presented as live is the core complaint.
 - **Regression test.** Replay of recorded trips with injected 10-minute gaps; ETA monotonicity bounds.
@@ -75,17 +75,17 @@ Symptom, user impact, evidence (n, share, trend, review IDs), feature check, com
 - **Evidence.** Book now disabled: `621969c8-9e70-4e8c-80db-def46b641121`. Schedules not listed: `daa27010-2c5f-4b85-8e31-a7d3b6a2acae`. Duplicate schedule: `b0d942c2-6bbe-4c1d-a158-9167965eda3d`. One day visible: `8dd20d1a-8c7b-4ece-a3ee-e2c6e31b9347`. Waitlisted cannot rebook: `6a1820a3-ce1c-45d1-8ff3-4134c0824acc`. 8-hour cutoff: `aadeb072-3a5b-43d9-a4a5-c8459716cc9b`. Wrong dates created: `0b11d7d5-f655-4951-855e-710761f2552e`.
 - **Feature check.** (1) Documented: schedule limits, cutoffs, ad-hoc scheduling. These are client-configured rules.
 - **Competing explanations.** Many complaints are a rule the user does not understand (cutoff, limit) with **no in-app explanation** [H]; a smaller set look like real defects (wrong dates, duplicates, disabled button) [H].
-- **Discriminating evidence.** Booking attempt outcomes by reason code; rate of rejections per rule; duplicate-schedule rate.
-- **Proposed fix.** [R] Every rejection shows the rule and the client's limit; fix defects separately.
+- **Discriminating evidence.** Day-1 booking funnel with attempt/validation/create/confirmation events, correlation IDs and outcomes by client rule; technical failures separate from valid policy rejection; confirmation latency and duplicate-schedule rate. A fresh manual booking/address audit is required because recall estimates are weak.
+- **Proposed fix.** [R] Investigate booking from day 1, show each rejection reason and next step, and fix confirmed wrong-date, duplicate and disabled-button defects separately. Do not wait for the low classifier count to settle before investigating.
 - **Regression test.** Date/timezone boundary tests; idempotent create.
 - **Confidence.** Low-medium.
 
-## R7. Operations outside the app (VEHICLE_DRIVER_OPS, ROUTING_ALLOCATION, SUPPORT_HELPDESK, DRIVER_CONTACT)
+## R7. Cross-team routing, fleet and support failures (VEHICLE_DRIVER_OPS, ROUTING_ALLOCATION, SUPPORT_HELPDESK, DRIVER_CONTACT)
 - **Symptom.** [Q] VEHICLE_DRIVER_OPS 70 (8.3%), ROUTING 70 (8.3%), SUPPORT 46 (5.4%, 98% one-star), DRIVER_CONTACT 20 (2.4%). Operations only 12.6% of POOL; app + operations 5.7%.
 - **Evidence.** 2.5-hour route: `3aa862df-73eb-4868-a695-42158aaced5e`. Clubbing passengers from different states: `7476b129-f0da-458e-8f86-d77ba2f9a710`. IVR request: `490639b9-df47-4486-985c-170673cfe038`. Helpdesk always busy: `3668eb36-579b-4fbf-ad0e-14f9ddc75a97`. Pickup 4:30 for a 6:00 shift: `ce4add6a-5cf6-4c6f-854d-bd4e29c1e07d`. Pickup time changed mid-night: `fde3c41e-ceff-46a0-99d3-2b69c23e6ead`. Pickup times change constantly: `f5347b3d-f7ab-405d-a482-bae26ecd5368`. Chat box request: `c43e13cd-0b94-40a0-b3a2-d4c59b14f049`. No option to call driver or helpdesk: `31f0d5ae-8046-43d7-9e34-8de9408e91a2`.
 - **Feature check.** (1) The "Communication interface" article (S15, modified 7 Apr 2025) describes one-way messages from site admins to app users (push notifications, pop-ups, banners) and does not mention drivers, chat or calls. ATLAS (S16) is described as a support chatbot that answers trip, location and scheduling questions and can raise a support ticket; the article does not say which roles use it. [I] The driver-contact requests (20 reviews) therefore point to a likely gap, but the silence of one article does not prove the product has no such feature; confirm in the product.
-- **System boundary.** Routing is an optimisation/policy matter set per client; vehicles and drivers are vendor-managed. An app change cannot fix these directly.
-- **Proposed fix.** [R] In-app helpdesk entry with expected response time; masked call/chat to the assigned driver; explain a pickup-time change and notify it. Routing is a **customer-success and policy conversation**, not an app ticket.
+- **System boundary.** Routing can involve planner software, client policy or execution; vehicles and drivers also involve capacity and vendors. Review text alone cannot decide which boundary failed. Product, Routing Engineering and Operations share diagnosis.
+- **Proposed fix.** [R] In-app helpdesk entry with expected response time; masked call/chat to the assigned driver; explain a pickup-time change and notify it. B9 is an owned cross-team workstream: internal incident register by day 5, weekly pilot review, missed-pickup/on-time/detour/resolution metrics, and escalation of confirmed planner defects to Routing Engineering.
 - **Confidence.** Medium; ownership uncertain.
 
 ## R8. Forced rating, consent and permission prompts (FORCED_RATING, PERMISSIONS_CONSENT, FEEDBACK_FLOW_BROKEN)
@@ -109,7 +109,7 @@ Symptom, user impact, evidence (n, share, trend, review IDs), feature check, com
 - **Competing explanations.** Intentional safety design with a poor screen layout; location accuracy used as a fraud or presence check that fails indoors or in basements; OTP and seat-belt prompts competing for the same screen.
 - **System boundary.** Employee app boarding screens, driver app, backend verification.
 - **Discriminating evidence.** Boarding funnel (OTP shown, seat-belt confirmed, boarded) with drop-off per step; QR scan failure rate by device and location accuracy setting.
-- **Proposed fix.** [R] Never let one prompt cover another (OTP always visible); make location-accuracy requirements explain themselves and offer a fallback; keep SOS reachable on every screen. Treat any SAFETY review as read-first in monthly triage.
+- **Proposed fix.** [R] Never let one prompt cover another (OTP always visible); make location-accuracy requirements explain themselves and offer a fallback; keep SOS reachable on every screen. Assess credible safety failures the same day they are discovered, with a named Safety lead and mitigation/escalation; monthly monitoring supplements daily support triage.
 - **Confidence.** Medium on the app-flow items; low on rates (n is small).
 
 ---
@@ -137,7 +137,9 @@ Symptom, user impact, evidence (n, share, trend, review IDs), feature check, com
 | R11 | Notifications and pickup-time changes | 3.9% (+ pickup-time reviews inside ETA) | Symptom | Notification delivery logs, change log of pickup times |
 
 ## Limits
-- All counts are approximate: the classifier has precision about 0.76 and recall about 0.65, so in aggregate it under-counts by roughly 14%, while individual categories can be over- or under-counted. Labels were produced by Claude, not an independent human. Wilson intervals cover sampling error only, not classifier error.
+- All counts are approximate: the classifier has precision about 0.76 and recall about 0.65, so in aggregate it under-counts by roughly 14%, while individual categories can be over- or under-counted. Original validation labels were produced by Claude; a 30-row human spot check is complete, with 13 AI-assisted category mappings. It is not a full independent audit. Wilson intervals cover sampling error only, not classifier error.
 - Reviews do not identify the employer, city or vendor.
 - Small clusters (n < 25) cannot be ranked against each other.
 - Android documentation (S19-S21) and Help Center articles (S13-S17) were read on 2026-10-11/12. Articles carry no year on some modification dates; whether a documented feature ships and works reliably is unverified. Internal behaviour was not observed.
+
+Ownership labels are provisional taxonomy buckets, not proof that a cause lies outside Engineering. Routing causes need the B9 cross-team investigation; public text alone cannot separate planner software, client policy and vendor execution.

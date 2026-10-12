@@ -9,4 +9,8 @@ jobs:
         with:
           python-version: "3.11"
       - run: pip install -r requirements.txt
-      - run: python -m pytest
+      - name: Require original submission evidence
+        run: |
+          test -f data/processed/run_20261010T203205Z/reviews_clean.csv
+          test -f data/raw/run_20261010T203205Z/manifest.json
+      - run: python -m pytest -ra

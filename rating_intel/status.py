@@ -66,7 +66,7 @@ def headline(df, days=90, manifest_path=None, top_n=3):
     listing = read_listing(manifest_path) if manifest_path else None
     if listing:
         L.append(f"Play listing when the snapshot was taken ({listing['captured']}): {listing['score']:.1f} stars from {listing['ratings']:,} ratings. "
-                 "This all-time figure is a different population from the text reviews below and is not comparable with them.")
+                 "Google weights recent ratings; this listing score is not a lifetime arithmetic mean and is not directly comparable with the text reviews below.")
     if sc["n"]:
         L.append(f"Last {days} days to {asof.date()}: {sc['n']} text reviews, mean {sc['mean']} stars (95% CI {sc['mean_ci'][0]}-{sc['mean_ci'][1]}), "
                  f"one-star {sc['one_pct']}% (CI {sc['one_ci'][0]}-{sc['one_ci'][1]}), 4-5 star {sc['pos_pct']}%.")
